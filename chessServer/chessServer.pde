@@ -10,7 +10,6 @@ boolean firstClick;
 int row1, col1, row2, col2, promopiece, id, r1, c1, r2, c2;
 boolean itsMyTurn = true; 
 boolean promo = false;
-//boolean promomsg = false;
 
 
 char grid[][] = {
@@ -51,33 +50,16 @@ void draw() {
   drawPieces();
   receiveMove();
   promo();
-
-  println(itsMyTurn);
-
-  //if (!itsMyTurn && !promo) {
-  //  fill(0, 200);
-  //  rect(0, 0, width, height);
-  //  textAlign(CENTER);
-  //  fill(200);
-  //  textSize(50);
-  //  text("Waiting For Response", width/2, height/2);
-  //} else {
-  //  fill(0, 0);
-  //}
 }
 
 void keyPressed() {
-  if (itsMyTurn) {
-    if (!(row2 == row1 && col2 == col1)) { 
-      if (key == 'z' || key == 'Z') {
-        grid[row1][col1] = grid[row2][col2];
-        grid[row2][col2] = '_';
-        id = 2;
-        myServer.write(id + "," + row2 + "," + col2 + "," + row1 + "," + col1);
-        row2 = row1;
-        col2 = col1;
-      }
-    }
+  if (itsMyTurn && !(row2 == row1 && col2 == col1) && !(grid[row2][col2] == 'p') && key == 'z' || key == 'Z') {
+    grid[row1][col1] = grid[row2][col2];
+    grid[row2][col2] = '_';
+    id = 2;
+    myServer.write(id + "," + row2 + "," + col2 + "," + row1 + "," + col1);
+    row2 = row1;
+    col2 = col1;
   }
 }
 
@@ -85,7 +67,6 @@ void receiveMove() {
   Client myclient = myServer.available();
   if (myclient != null) {
     String incoming = myclient.readString();
-    println(incoming);
     id = int(incoming.substring(0, 1));
 
     //############## MOVE RECEIVE ##############
@@ -119,20 +100,19 @@ void receiveMove() {
         grid[0][c2] = 'b'; 
         promopiece = 0;
       }
+    }
 
-      //############## TAKEBACK RECEIVE ############## 
-      if (id == 2) {
-        r2 = int(incoming.substring(2, 3));
-        c2 = int(incoming.substring(4, 5));
-        r1 = int(incoming.substring(6, 7));
-        c1 = int(incoming.substring(8, 9));
-        grid[r1][c1] = grid[r2][c2];
-        grid[r2][c2] = '_';
-      }
+    //############## TAKEBACK RECEIVE ############## 
+    if (id == 2) {
+      r2 = int(incoming.substring(2, 3));
+      c2 = int(incoming.substring(4, 5));
+      r1 = int(incoming.substring(6, 7));
+      c1 = int(incoming.substring(8, 9));
+      grid[r1][c1] = grid[r2][c2];
+      grid[r2][c2] = '_';
     }
   }
 }
-
 
 void drawBoard() {
   for (int r = 0; r < 8; r++) {
@@ -231,29 +211,25 @@ void mouseReleased() {
     id = 1;
     if (mouseX >= width/2 - 260 && mouseX <= width/2 - 160 && mouseY >= height/2 - 40 && mouseY <= height/2 + 60) { 
       grid[7][col2] = 'Q';
-      promopiece = 1;
-      myServer.write(id + "," + col2 + ","  + promopiece);
+      myServer.write(id + "," + col2 + ","  + 1);
       promo = false;
       firstClick = true;
     }
     if (mouseX >= width/2 - 120 && mouseX <= width/2 - 20 && mouseY >= height/2 - 40 && mouseY <= height/2 + 60) { 
       grid[7][col2] = 'R';
-      promopiece = 2;
-      myServer.write(id + "," + col2 + ","  + promopiece);
+      myServer.write(id + "," + col2 + ","  + 2);
       promo = false;
       firstClick = true;
     }
     if (mouseX >= width/2 + 20 && mouseX <= width/2 + 120 && mouseY >= height/2 - 40 && mouseY <= height/2 + 60) {    
       grid[7][col2] = 'N';
-      promopiece = 3;
-      myServer.write(id + "," + col2 + ","  + promopiece);
+      myServer.write(id + "," + col2 + ","  + 3);
       promo = false;
       firstClick = true;
     }
     if (mouseX >= width/2 + 160 && mouseX <= width/2 + 200 && mouseY >= height/2 - 40 && mouseY <= height/2 + 60) { 
       grid[7][col2] = 'B';
-      promopiece = 4;
-      myServer.write(id + "," + col2 + ","  + promopiece);
+      myServer.write(id + "," + col2 + ","  + 4);
       promo = false;
       firstClick = true;
     }

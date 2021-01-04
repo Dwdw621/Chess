@@ -10,7 +10,6 @@ boolean firstClick;
 int row1, col1, row2, col2, promopiece, id, r1, c1, r2, c2;
 boolean itsMyTurn = false;
 boolean promo = false;
-//boolean promomsg = false;
 
 
 char grid[][] = {
@@ -51,17 +50,17 @@ void draw() {
   drawPieces();
   receiveMove();
   promo();
+}
 
-  //if (!itsMyTurn && !promo) {
-  //  fill(0, 200);
-  //  rect(0, 0, width, height);
-  //  textAlign(CENTER);
-  //  fill(200);
-  //  textSize(50);
-  //  text("Waiting For Response", width/2, height/2);
-  //} else {
-  //  fill(0, 0);
-  //}
+void keyPressed() {
+  if (itsMyTurn && !(row2 == row1 && col2 == col1) && !(grid[row2][col2] == 'P') && key == 'z' || key == 'Z') {
+    grid[row1][col1] = grid[row2][col2];
+    grid[row2][col2] = '_';
+    id = 2;
+    myClient.write(id + "," + row2 + "," + col2 + "," + row1 + "," + col1);
+    row2 = row1;
+    col2 = col1;
+  }
 }
 
 void receiveMove() {
@@ -207,29 +206,25 @@ void mouseReleased() {
     id = 1;
     if (mouseX >= width/2 - 260 && mouseX <= width/2 - 160 && mouseY >= height/2 - 40 && mouseY <= height/2 + 60) { 
       grid[0][col2] = 'q';
-      promopiece = 1;
-      myClient.write(id + "," + col2 + ","  + promopiece);
+      myClient.write(id + "," + col2 + ","  + 1);
       promo = false;
       firstClick = true;
     }
     if (mouseX >= width/2 - 120 && mouseX <= width/2 - 20 && mouseY >= height/2 - 40 && mouseY <= height/2 + 60) { 
       grid[0][col2] = 'r';
-      promopiece = 2;
-      myClient.write(id + "," + col2 + ","  + promopiece);
+      myClient.write(id + "," + col2 + ","  + 2);
       promo = false;
       firstClick = true;
     }
     if (mouseX >= width/2 + 20 && mouseX <= width/2 + 120 && mouseY >= height/2 - 40 && mouseY <= height/2 + 60) {    
       grid[0][col2] = 'n';
-      promopiece = 3;
-      myClient.write(id + "," + col2 + ","  + promopiece);
+      myClient.write(id + "," + col2 + ","  + 3);
       promo = false;
       firstClick = true;
     }
     if (mouseX >= width/2 + 160 && mouseX <= width/2 + 200 && mouseY >= height/2 - 40 && mouseY <= height/2 + 60) { 
       grid[0][col2] = 'b';
-      promopiece = 4;
-      myClient.write(id + "," + col2 + ","  + promopiece);
+      myClient.write(id + "," + col2 + ","  + 4);
       promo = false;
       firstClick = true;
     }
